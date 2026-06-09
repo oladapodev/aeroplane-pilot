@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/oladapodev/aeroplane-pilot/internal/aeroplane"
+	botpkg "github.com/oladapodev/aeroplane-pilot/internal/bot"
 	"github.com/oladapodev/aeroplane-pilot/internal/llm"
 )
 
@@ -32,6 +33,10 @@ func NewRouter(client AeroplaneClient, opts ...Option) *Router {
 		opt(r)
 	}
 	return r
+}
+
+func (r *Router) Handle(message botpkg.Message) string {
+	return r.Route(message.Text)
 }
 
 func (r *Router) Route(message string) string {
