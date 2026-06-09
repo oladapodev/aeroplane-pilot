@@ -1,47 +1,39 @@
-# Pilot
+# Aeroplane Pilot
 
-Pilot is the AI copilot for [Aeroplane](https://github.com/xt42io/aeroplane). It monitors your deployments, answers questions about your infrastructure, and sends daily health reports — all through Telegram, Discord, or other messaging platforms.
+Aeroplane Pilot is the Go rewrite of the Aeroplane assistant. It reads the Aeroplane SQLite database, routes commands through a shared core, and can run over Telegram or Discord.
 
-## How it works
+## What it does
 
-Pilot runs alongside Aeroplane on your VPS. It reads the same SQLite database and talks to LLMs (OpenAI, Anthropic, etc.) to answer questions and generate reports. When you message it on Telegram or Discord, it can:
+- `/health` and `/status` commands
+- free-text replies through an LLM
+- Telegram runtime adapter
+- Discord runtime adapter
+- SQLite-backed Aeroplane reads
 
-- **Check status**: "What's running right now?"
-- **Diagnose failures**: "Why did the last deploy fail?"
-- **Daily health reports**: Scheduled summary of all services, deployments, disk usage, and system health
-- **Alerts**: "Service `api` just crashed" with relevant logs
-- **Manage deployments**: Trigger redeploys, view logs, check env vars
-
-## Installation
+## Build
 
 ```bash
-# On your Aeroplane VPS
-curl -fsSL https://get.pilot.run | sh
+make test
+make build
 ```
 
-Or run alongside Aeroplane locally:
+Binary output:
 
 ```bash
-git clone https://github.com/oladapodev/aeroplane-pilot.git
-cd aeroplane-pilot
-cp .env.example .env
-npm install
-npm run dev
+bin/pilot
 ```
 
-## Configuration
+## Run
 
-Pilot is configured through environment variables or a `.env` file:
+Set at least one messaging token and an LLM key:
 
-| Variable | Description | Required |
-|---|---|---|
-| `AEROPLANE_HOME` | Path to Aeroplane installation (reads DB and config) | Yes |
-| `TELEGRAM_BOT_TOKEN` | Telegram bot token | At least one gateway |
-| `DISCORD_BOT_TOKEN` | Discord bot token | At least one gateway |
-| `OPENAI_API_KEY` | LLM provider key | Yes (or another provider) |
-| `ANTHROPIC_API_KEY` | Alternative LLM provider | No |
-| `DAILY_HEALTH_TIME` | Cron time for daily reports (default: `08:00`) | No |
+- `AEROPLANE_HOME` - Aeroplane install path, default `/opt/aeroplane`
+- `LLM_PROVIDER` - default `openai`
+- `LLM_API_KEY` or `OPENAI_API_KEY`
+- `LLM_MODEL` - default `gpt-4o`
+- `TELEGRAM_BOT_TOKEN` - optional
+- `DISCORD_BOT_TOKEN` - optional
+- `WHATSAPP_BOT_TOKEN` - reserved for later
+- `DAILY_HEALTH_TIME` - default `08:00`
 
-## License
-
-Apache-2.0
+If no messaging token is set, the binary prints `/health` once and exits.
