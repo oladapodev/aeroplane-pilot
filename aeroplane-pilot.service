@@ -1,0 +1,16 @@
+[Unit]
+Description=Aeroplane Pilot - Telegram health bot
+After=network.target
+
+[Service]
+Type=simple
+User=aeroplane
+Group=aeroplane
+WorkingDirectory=/opt/aeroplane
+EnvironmentFile=/etc/default/aeroplane-pilot
+ExecStart=/usr/local/bin/pilot
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
