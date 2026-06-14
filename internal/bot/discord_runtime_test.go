@@ -41,6 +41,32 @@ func TestHandleDiscordMessageSendsReply(t *testing.T) {
 	}
 }
 
+func TestHandleDiscordMessageIgnoresBotAuthor(t *testing.T) {
+	called := false
+
+	message := &discordgo.MessageCreate{
+		Message: &discordgo.Message{
+			Content:    "ping",
+			ChannelID: "chan-2",
+			Author: &discordgo.User{
+				ID:  "user-10",
+				Bot: true,
+			},
+		},
+	}
+
+	err := handleDiscordMessage(&discordgo.Session{}, discordEchoHandler{}, message, func(string, string) error {
+		called = true
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("handleDiscordMessage() error = %v, want nil", err)
+	}
+	if called {
+		t.Fatal("send function was called for bot authored message")
+	}
+}
+
 func TestHandleDiscordMessageReturnsSendError(t *testing.T) {
 	message := &discordgo.MessageCreate{
 		Message: &discordgo.Message{Content: "hello", ChannelID: "chan-2"},
